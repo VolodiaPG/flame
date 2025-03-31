@@ -240,7 +240,8 @@ defmodule FLAME.Pool do
   See `FLAME.call/3` for more information.
   """
   def call(name, func, opts \\ []) when is_function(func, 0) and is_list(opts) do
-    caller_pid = self()
+    opts = Keyword.put_new(opts, :caller_pid, self())
+    caller_pid = opts[:caller_pid]
     do_call(name, func, caller_pid, opts)
   end
 
@@ -265,7 +266,8 @@ defmodule FLAME.Pool do
   def cast(name, func, opts) when is_function(func, 0) and is_list(opts) do
     %{task_sup: task_sup} = lookup_meta(name)
 
-    caller_pid = self()
+    opts = Keyword.put_new(opts, :caller_pid, self())
+    caller_pid = opts[:caller_pid]
     opts = Keyword.put_new(opts, :timeout, :infinity)
 
     # we don't care about the result so don't copy it back to the caller
@@ -778,7 +780,7 @@ defmodule FLAME.Pool do
       Queue.pop_until(state.waiting, fn _pid, %WaitingState{} = waiting ->
         %WaitingState{from: {pid, _}, monitor_ref: ref, deadline: deadline} = waiting
         # we don't need to reply to waiting callers because they will either have died
-        # or execeeded their own deadline handled by receive + after
+        # or exceeded their own deadline handled by receive + after
         if Process.alive?(pid) and not deadline_expired?(deadline) do
           true
         else

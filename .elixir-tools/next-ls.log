@@ -1,0 +1,89 @@
+
+14:14:25.656 [info] Loading 150 CA(s) from :otp store
+
+14:14:25.694 [notice] Application next_ls exited: NextLS.Application.start(:normal, []) returned an error: shutdown: failed to start child: NextLS.LSPSupervisor
+    ** (EXIT) shutdown: failed to start child: NextLS
+        ** (EXIT) an exception was raised:
+            ** (ErlangError) Erlang error: :enoent
+                (elixir 1.18.3) lib/system.ex:1114: System.cmd("elixir", ["--short-version"], [])
+                (next_ls 0.23.2) lib/next_ls.ex:47: NextLS.init/2
+                (gen_lsp 0.10.0) lib/gen_lsp.ex:201: GenLSP.init/1
+                (stdlib 6.2.1) proc_lib.erl:329: :proc_lib.init_p_do_apply/3
+
+14:14:25.700 [notice] Application spitfire exited: :stopped
+
+14:14:25.700 [notice] Application sourceror exited: :stopped
+
+14:14:25.700 [notice] Application opentelemetry_telemetry exited: :stopped
+
+14:14:25.700 [notice] Application telemetry_registry exited: :stopped
+
+14:14:25.700 [notice] Application opentelemetry_process_propagator exited: :stopped
+
+14:14:25.700 [notice] Application opentelemetry_exporter exited: :stopped
+
+14:14:25.704 [notice] Application tls_certificate_check exited: :stopped
+
+14:14:25.704 [notice] Application ssl_verify_fun exited: :stopped
+
+14:14:25.705 [notice] Application inets exited: :stopped
+
+14:14:25.705 [notice] Application grpcbox exited: :stopped
+
+14:14:25.706 [notice] Application gproc exited: :stopped
+
+14:14:25.706 [notice] Application chatterbox exited: :stopped
+
+14:14:25.706 [notice] Application hpack exited: :stopped
+
+14:14:25.706 [notice] Application acceptor_pool exited: :stopped
+
+14:14:25.706 [notice] Application ctx exited: :stopped
+
+14:14:25.706 [notice] Application opentelemetry exited: :stopped
+
+14:14:25.706 [notice] Application opentelemetry_api exited: :stopped
+
+14:14:25.706 [notice] Application opentelemetry_semantic_conventions exited: :stopped
+
+14:14:25.706 [notice] Application gen_lsp exited: :stopped
+
+14:14:25.706 [notice] Application typed_struct exited: :stopped
+
+14:14:25.706 [notice] Application schematic exited: :stopped
+
+14:14:25.706 [notice] Application exqlite exited: :stopped
+
+14:14:25.707 [notice] Application db_connection exited: :stopped
+
+14:14:25.707 [notice] Application burrito exited: :stopped
+
+14:14:25.708 [notice] Application req exited: :stopped
+
+14:14:25.708 [notice] Application finch exited: :stopped
+
+14:14:25.709 [notice] Application telemetry exited: :stopped
+
+14:14:25.710 [notice] Application nimble_pool exited: :stopped
+
+14:14:25.710 [notice] Application nimble_options exited: :stopped
+
+14:14:25.710 [notice] Application mint exited: :stopped
+
+14:14:25.711 [notice] Application ssl exited: :stopped
+
+14:14:25.711 [notice] Application public_key exited: :stopped
+
+14:14:25.711 [notice] Application asn1 exited: :stopped
+
+14:14:25.711 [notice] Application crypto exited: :stopped
+
+14:14:25.711 [notice] Application hpax exited: :stopped
+
+14:14:25.711 [notice] Application mime exited: :stopped
+
+14:14:25.711 [notice] Application castore exited: :stopped
+
+14:14:25.711 [notice] Application jason exited: :stopped
+
+14:14:25.711 [notice] Application eex exited: :stopped
