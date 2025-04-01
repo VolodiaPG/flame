@@ -37,6 +37,8 @@ defmodule FLAME.Pool do
   """
   use GenServer
 
+  require Logger
+
   alias FLAME.{Pool, Runner, Queue, CodeSync}
   alias FLAME.Pool.{RunnerState, WaitingState, Caller}
 
@@ -317,7 +319,17 @@ defmodule FLAME.Pool do
     %{boot_timeout: boot_timeout, track_resources: track_resources} = lookup_meta(name)
     timeout = opts[:timeout] || boot_timeout
     track_resources = Keyword.get(opts, :track_resources, track_resources)
-    pid = Process.whereis(name) || exit({:noproc, {__MODULE__, fun_name, args}})
+    # pid = if opts[:caller_pid] do
+    #   opts[:caller_pid]
+    # else
+    #   Process.whereis(name) || exit({:noproc, {__MODULE__, fun_name, args}})
+    # end
+
+    pid =
+      Process.whereis(name) || exit({:noproc, {__MODULE__, fun_name, args, name}})
+    # pid2 = Keyword.get(opts, :caller_pid, Process.whereis(name) || exit({:noproc,{__MODULE__, fun_name, args}}))
+    # Logger.warning("Checking out #{inspect pid} from #{inspect name}, pid2 is #{inspect pid2}")
+
     ref = Process.monitor(pid)
     {start_time, deadline} = deadline(timeout)
 
