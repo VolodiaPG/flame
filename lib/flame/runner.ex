@@ -322,6 +322,9 @@ defmodule FLAME.Runner do
 
               {:reply, :ok, new_state}
 
+            {:error, {:noop, reason}} ->
+              {:noreply, state}
+
             {:error, reason} ->
               {:stop, {:shutdown, reason}, state}
 

@@ -327,6 +327,7 @@ defmodule FLAME.Pool do
 
     pid =
       Process.whereis(name) || exit({:noproc, {__MODULE__, fun_name, args, name}})
+
     # pid2 = Keyword.get(opts, :caller_pid, Process.whereis(name) || exit({:noproc,{__MODULE__, fun_name, args}}))
     # Logger.warning("Checking out #{inspect pid} from #{inspect name}, pid2 is #{inspect pid2}")
 
@@ -357,6 +358,10 @@ defmodule FLAME.Pool do
             send_cancel(pid, ref, reason)
             result
         end
+
+      {:error, {:exit, reason}} ->
+        Process.demonitor(ref, [:flush])
+        raise("Runner #{inspect(pid)} raised an exception #{inspect(reason)}")
 
       {:DOWN, ^ref, _, _, reason} ->
         exit({reason, {__MODULE__, fun_name, args}})
@@ -497,7 +502,7 @@ defmodule FLAME.Pool do
   end
 
   def handle_info({ref, {:error, reason}}, %Pool{} = state) when is_reference(ref) do
-    {:stop, reason, state}
+    {:noreply, state}
   end
 
   def handle_info(:async_boot_continue, %Pool{} = state) do
@@ -615,7 +620,7 @@ defmodule FLAME.Pool do
           waiting_in(state, deadline, from)
         else
           state
-          |> async_boot_runner()
+          |> async_boot_runner(from)
           |> waiting_in(deadline, from)
         end
 
@@ -690,14 +695,32 @@ defmodule FLAME.Pool do
     }
   end
 
-  defp async_boot_runner(%Pool{on_grow_start: on_grow_start, name: name} = state) do
+  defp async_boot_runner(
+         %Pool{on_grow_start: on_grow_start, name: name} =
+           state,
+         from \\ nil
+       ) do
     new_count = runner_count(state) + 1
 
     task =
       Task.Supervisor.async_nolink(state.task_sup, fn ->
         if on_grow_start, do: on_grow_start.(%{count: new_count, name: name, pid: self()})
 
-        start_child_runner(state)
+        case start_child_runner(state) do
+          {:ok, arg} ->
+            {:ok, arg}
+
+          {:error, {:exit, reason}} = err ->
+            if from do
+              {from, _} = from
+              send(from, err)
+            end
+
+            Process.exit(self(), {:error, {:exit, reason, from}})
+
+          {:error, reason} = err ->
+            Process.exit(self(), err)
+        end
       end)
 
     new_pending = Map.put(state.pending_runners, task.ref, task.pid)
