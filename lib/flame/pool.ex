@@ -863,7 +863,7 @@ defmodule FLAME.Pool do
       %{^ref => _} ->
         state = %Pool{state | pending_runners: Map.delete(state.pending_runners, ref)}
         # we rate limit this to avoid many failed async boot attempts
-        if has_unmet_servicable_demand?(state) do
+        if reason in [:normal, :shutdown] and has_unmet_servicable_demand?(state) do
           state
           |> maybe_on_grow_end(pid, {:exit, reason})
           |> schedule_async_boot_runner()
