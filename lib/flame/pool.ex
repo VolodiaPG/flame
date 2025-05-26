@@ -16,6 +16,10 @@ defmodule FLAME.Pool.Caller do
   defstruct checkout_ref: nil, monitor_ref: nil, runner_ref: nil
 end
 
+defmodule FLAME.Pool.Error do
+  defexception [:message, :reason]
+end
+
 defmodule FLAME.Pool do
   @moduledoc """
   Manages a pool of `FLAME.Runner` processes.
@@ -361,7 +365,10 @@ defmodule FLAME.Pool do
 
       {:error, {:exit, reason}} ->
         Process.demonitor(ref, [:flush])
-        raise("Runner #{inspect(pid)} raised an exception #{inspect(reason)}")
+
+        raise FLAME.Pool.Error,
+          message: "Runner #{inspect(pid)} raised an exception #{inspect(reason)}",
+          reason: reason
 
       {:DOWN, ^ref, _, _, reason} ->
         exit({reason, {__MODULE__, fun_name, args}})
